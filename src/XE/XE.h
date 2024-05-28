@@ -186,64 +186,15 @@ inl size_t
 	}return ln;
 }
 
-#include "XE/Utils/ConvertUTF.h"
-inl char* W4CStr_(char* _dest, const UTF32_t*  _src, size_t len){
-	const UTF32_t* input = (const UTF32_t*)_src;
-	
-	UTF8_t* utf8 = _dest;//+1 for null terminating char
-	
-	UTF8_t* outStart = (UTF8_t*)utf8;
-	ConversionResult res =	ConvertUTF32toUTF8(&input, &input[len/4], &utf8, &utf8[len], lenientConversion);
-	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
-	
-	#ifdef D_Debug
-	if(res == sourceExhausted) {err_print("sourceExhausted");}
-	if(res == targetExhausted) {err_print("targetExhausted");}
-	#endif
-	
-	*utf8 = 0; //Terminate string
-	
-	return (char*)outStart;
-}
-inl char* W2CStr_(char* _dest, const wchar_t*  _src, size_t len){
-	const UTF16_t* input = (const UTF16_t*)_src;
-	
-	UTF8_t* utf8 = _dest;//+1 for null terminating char
-	
-	UTF8_t* outStart = (UTF8_t*)utf8;
-	ConversionResult res =	ConvertUTF16toUTF8(&input, &input[len/2], &utf8, &utf8[len], lenientConversion);
-	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
-	
-	#ifdef D_Debug
-	if(res == sourceExhausted) {err_print("sourceExhausted");}
-	if(res == targetExhausted) {err_print("targetExhausted");}
-	#endif
-	
-	*utf8 = 0; //Terminate string
-	
-	return (char*)outStart;
-}
-inl char*  W2CStr(view_t* _dest, view_t*  _src){
-	return W2CStr_(_dest->data, (wchar_t*)_src->data, _src->size);
-}
-inl char* CStrW2_(wchar_t* _dest, const char*  _src, size_t len, size_t destlen){
-	const UTF8_t* input = (const UTF8_t*)_src;
-	
-	UTF16_t* utf16 = _dest;//+1 for null terminating char
-	
-	UTF16_t* outStart = (UTF16_t*)utf16;
-	ConversionResult res =	ConvertUTF8toUTF16(&input, &input[len], &utf16, &utf16[destlen], lenientConversion);
-	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
-	
-	#ifdef D_Debug
-	if(res == sourceExhausted) {err_print("sourceExhausted");}
-	if(res == targetExhausted) {err_print("targetExhausted");}
-	#endif
-	
-	*utf16 = 0; //Terminate string
-	
-	return (char*)outStart;
-}
+typedef uint32_t	UTF32;	/* at least 32 bits */
+typedef uint16_t	UTF16;	/* at least 16 bits */
+typedef uint8_t		UTF8;	/* typically 8 bits */
+
+fn char* W4CStr_(char* _dest, const UTF32_t*  _src, size_t len);
+fn char* W2CStr_(char* _dest, const wchar_t*  _src, size_t len);
+fn char* W2CStr(view_t* _dest, view_t*  _src);
+fn char* CStrW2_(wchar_t* _dest, const char*  _src, size_t len, size_t destlen);
+
 //Use x4 size to be sure we can fit all char in UTF8 (length UTF16 x 4), 
 //using wcslen_ can take extra space (x2 for surogate) but it's more optimised vs utf16_len
 #define Vla_WstrC(_name, _wstr)        	  \

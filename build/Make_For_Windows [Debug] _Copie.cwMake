@@ -5,8 +5,8 @@
 ;Enable large dll/so loading (> 650 mb)
 {vExtraFlag}=-Wl,--large-address-aware
 >
-;-{App}=D:/Backup/Prog/wcpv/Module/wake-tools/imgui/ImGUI-0.1/imgui-w32-d.dll
--{App}=D:/Backup/Prog/wcpv/Wake-Samples-dev/imgui/.obj/HelloWorld.dll
+-{App}=D:/Backup/Prog/wcpv/Module/wake-tools/imgui/ImGUI-0.1/imgui-w32-d.dll
+;-{App}=D:/Backup/Prog/wcpv/Wake-Samples-dev/imgui/.obj/HelloWorld.dll
 >
 -#Run Build.cwc -{_wToolchain}= VLianceTool/LibRT
 >

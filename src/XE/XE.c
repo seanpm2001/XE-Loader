@@ -262,3 +262,63 @@ XE_Module*
 
 	return m;
 }
+
+/////
+#include "XE/Utils/ConvertUTF.h"
+char* W4CStr_(char* _dest, const UTF32_t*  _src, size_t len){
+	const UTF32_t* input = (const UTF32_t*)_src;
+	
+	UTF8_t* utf8 = _dest;//+1 for null terminating char
+	
+	UTF8_t* outStart = (UTF8_t*)utf8;
+	ConversionResult res =	ConvertUTF32toUTF8(&input, &input[len/4], &utf8, &utf8[len], lenientConversion);
+	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
+	
+	#ifdef D_Debug
+	if(res == sourceExhausted) {err_print("sourceExhausted");}
+	if(res == targetExhausted) {err_print("targetExhausted");}
+	#endif
+	
+	*utf8 = 0; //Terminate string
+	
+	return (char*)outStart;
+}
+char* W2CStr_(char* _dest, const wchar_t*  _src, size_t len){
+	const UTF16_t* input = (const UTF16_t*)_src;
+	
+	UTF8_t* utf8 = _dest;//+1 for null terminating char
+	
+	UTF8_t* outStart = (UTF8_t*)utf8;
+	ConversionResult res =	ConvertUTF16toUTF8(&input, &input[len/2], &utf8, &utf8[len], lenientConversion);
+	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
+	
+	#ifdef D_Debug
+	if(res == sourceExhausted) {err_print("sourceExhausted");}
+	if(res == targetExhausted) {err_print("targetExhausted");}
+	#endif
+	
+	*utf8 = 0; //Terminate string
+	
+	return (char*)outStart;
+}
+char*  W2CStr(view_t* _dest, view_t*  _src){
+	return W2CStr_(_dest->data, (wchar_t*)_src->data, _src->size);
+}
+char* CStrW2_(wchar_t* _dest, const char*  _src, size_t len, size_t destlen){
+	const UTF8_t* input = (const UTF8_t*)_src;
+	
+	UTF16_t* utf16 = _dest;//+1 for null terminating char
+	
+	UTF16_t* outStart = (UTF16_t*)utf16;
+	ConversionResult res =	ConvertUTF8toUTF16(&input, &input[len], &utf16, &utf16[destlen], lenientConversion);
+	//Possible value of res: conversionOK || sourceExhausted || targetExhausted
+	
+	#ifdef D_Debug
+	if(res == sourceExhausted) {err_print("sourceExhausted");}
+	if(res == targetExhausted) {err_print("targetExhausted");}
+	#endif
+	
+	*utf16 = 0; //Terminate string
+	
+	return (char*)outStart;
+}
